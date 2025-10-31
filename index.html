@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Hacktoberfest 2025 — Dashboard</title>
+  <style>
+    :root{
+      --bg:#0f1724;
+      --card:#0b1220;
+      --muted:#9aa7b2;
+      --accent:#ff6b6b;
+      --glass: rgba(255,255,255,0.03);
+      --glass-2: rgba(255,255,255,0.02);
+      --green:#4ade80;
+      --card-radius:12px;
+      font-family: Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:linear-gradient(180deg,#071021 0%, #071827 60%);
+      color:#e6eef6;
+      padding:28px;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .container{
+      max-width:1200px;
+      margin:0 auto;
+      display:grid;
+      grid-template-columns: 1fr 360px;
+      gap:20px;
+      align-items:start;
+    }
+
+    header{
+      grid-column:1/-1;
+      display:flex;
+      gap:18px;
+      align-items:center;
+      margin-bottom:6px;
+    }
+    .logo {
+      width:64px;
+      height:64px;
+      border-radius:12px;
+      background:linear-gradient(135deg,var(--accent),#ff9f43);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:700;
+      color:#071021;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.45);
+    }
+
+    .title {
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .title h1{margin:0;font-size:20px;letter-spacing:0.2px}
+    .subtitle{color:var(--muted);font-size:13px;margin-top:0;}
+
+    /* typing SVG style */
+    .svg-title{
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+    svg#typing-logo { height:36px; width:300px; overflow:visible; }
+    .typing-text{
+      fill:none;
+      stroke:#ffffff;
+      stroke-width:1.2;
+      stroke-linecap:round;
+      stroke-linejoin:round;
+      stroke-dasharray: 300;
+      stroke-dashoffset: 300;
+      animation: write 3.5s linear forwards 0.3s;
+    }
+    @keyframes write {
+      to { stroke-dashoffset: 0; }
+    }
+
+    /* layout */
+    .main {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+      padding:18px;
+      border-radius: var(--card-radius);
+      box-shadow: 0 8px 30px rgba(3,7,18,0.6);
+    }
+
+    .grid {
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:14px;
+      margin-bottom:16px;
+    }
+    .card{
+      background:linear-gradient(180deg,var(--card), var(--glass));
+      padding:12px;
+      border-radius:10px;
+      min-height:64px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap:6px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+    }
+    .card .label{font-size:12px;color:var(--muted)}
+    .card .value{font-size:18px;font-weight:700}
+
+    /* Contribution grid (snake) */
+    .contrib-wrap{
+      margin-top:12px;
+    }
+    .contrib-grid{
+      display:grid;
+      grid-template-columns: repeat(14, 14px);
+      gap:5px;
+      padding:12px;
+      background:var(--glass-2);
+      border-radius:8px;
+      width:max-content;
+    }
+    .cell{
+      width:14px;height:14px;border-radius:3px;background:#071827;
+      transition: background 180ms linear, transform 200ms linear;
+      box-shadow: inset 0 -1px 0 rgba(0,0,0,0.6);
+    }
+    .cell.active{ background: var(--accent); transform: scale(1.18) }
+    .cell.mid{ background: #ff9f43 }
+    .cell.tail{ background: #ffcc9b }
+
+    /* right column */
+    .right {
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+    .panel{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+      padding:14px;border-radius:12px;
+      box-shadow: 0 6px 18px rgba(3,7,18,0.5);
+    }
+    .kbd{font-size:13px;color:var(--muted); background:rgba(255,255,255,0.02); padding:6px 8px; border-radius:6px; display:inline-block}
+    .small{font-size:13px;color:var(--muted)}
+
+    /* badges row */
+    .badges{display:flex;gap:8px;flex-wrap:wrap}
+    .badge{
+      background: rgba(255,255,255,0.03);
+      padding:8px 10px;border-radius:999px;font-size:13px;color:var(--muted)
+    }
+
+    footer{grid-column:1/-1;margin-top:18px;color:var(--muted);font-size:13px;text-align:center}
+
+    /* responsive */
+    @media (max-width:980px){
+      .container{grid-template-columns:1fr; padding:18px}
+      .right{order:2}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">HF</div>
+      <div class="title">
+        <div class="svg-title">
+          <!-- SVG "typing" headline. Stroke animation draws the letters -->
+          <svg id="typing-logo" viewBox="0 0 600 80" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <g transform="translate(6,52) scale(1,-1)">
+              <!-- path text formed by simple strokes (stylized) -->
+              <path class="typing-text" d="M10 5 L40 5 L40 55 M45 5 L75 5 L75 55 M95 5 L125 55 M125 5 L95 55 M145 5 L175 5 M145 55 L175 55
+              M200 5 L200 55 M200 30 L235 30 M260 5 L260 55" />
+            </g>
+          </svg>
+
+          <!-- simple typed subtitle -->
+          <div style="font-size:13px;color:var(--muted)">Hacktoberfest 2025 • Elite Code & Community</div>
+        </div>
+        <div class="subtitle">Interactive demo: live metrics, contribution heatmap, & snake animation for the GitHub grid.</div>
+      </div>
+    </header>
+
+    <main class="main">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div style="font-weight:700">Live Repository Snapshot</div>
+        <div class="badges">
+          <div class="badge">⭐ Stars 1.2k</div>
+          <div class="badge">🍴 Forks 420</div>
+          <div class="badge">🔀 PRs 68</div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <div class="label">Total Stars</div>
+          <div class="value">1,234</div>
+        </div>
+
+        <div class="card">
+          <div class="label">Total Forks</div>
+          <div class="value">421</div>
+        </div>
+
+        <div class="card">
+          <div class="label">Contributors</div>
+          <div class="value">256</div>
+        </div>
+
+        <div class="card">
+          <div class="label">Open PRs</div>
+          <div class="value">14</div>
+        </div>
+
+        <div class="card">
+          <div class="label">Merged PRs</div>
+          <div class="value">9,312</div>
+        </div>
+
+        <div class="card">
+          <div class="label">Issues</div>
+          <div class="value">48</div>
+        </div>
+      </div>
+
+      <!-- Contribution Grid + Snake animation -->
+      <section class="contrib-wrap">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div style="font-weight:700">Contribution Heatmap (demo)</div>
+          <div class="small">Live animation • Demo only</div>
+        </div>
+
+        <div class="contrib-grid" id="contribGrid"></div>
+
+        <div style="margin-top:10px;color:var(--muted);font-size:13px">
+          Tip: This is a demo grid that shows an animated "snake" traveling through contribution squares — replace cells with live GitHub data in a real project.
+        </div>
+      </section>
+
+      <div style="margin-top:14px;display:flex;gap:12px;flex-wrap:wrap">
+        <div class="card" style="flex:1;min-width:220px">
+          <div class="label">Repository Health</div>
+          <div class="value">Excellent</div>
+          <div class="small">Maintainers: 4 • Active CI</div>
+        </div>
+
+        <div class="card" style="flex:1;min-width:220px">
+          <div class="label">Top Language</div>
+          <div class="value">JavaScript • 62%</div>
+          <div class="small">Followed by Python and TypeScript</div>
+        </div>
+      </div>
+    </main>
+
+    <aside class="right">
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div style="font-weight:700">Quick Links</div>
+          <div class="small">Share • Follow</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <a class="kbd" href="#" onclick="alert('Open WhatsApp link')">Join WhatsApp</a>
+          <a class="kbd" href="#" onclick="alert('Open LinkedIn')">LinkedIn</a>
+          <a class="kbd" href="#" onclick="alert('Open Twitter')">Twitter</a>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div style="font-weight:700;margin-bottom:8px">Live KPI</div>
+        <div class="small">Total Views <strong style="color:var(--green);margin-left:6px">24.8k</strong></div>
+        <div class="small" style="margin-top:6px">Unique Visitors <strong style="color:#ffd166;margin-left:6px">3.1k</strong></div>
+        <div style="margin-top:10px"><small class="small">Last commit: 2025-01-15 • CI: passing</small></div>
+      </div>
+
+      <div class="panel">
+        <div style="font-weight:700;margin-bottom:8px">Badges</div>
+        <div class="badges" style="margin-top:6px">
+          <div class="badge">First PR</div>
+          <div class="badge">Contributor</div>
+          <div class="badge">Docs Champion</div>
+        </div>
+      </div>
+    </aside>
+
+    <footer>
+      This is a demo dashboard for Hacktoberfest 2025. Replace mock stats with real GitHub data using the GitHub API.
+    </footer>
+  </div>
+
+  <script>
+    // Contribution grid snake animation (demo)
+    const cols = 14;
+    const rows = 8;
+    const grid = document.getElementById('contribGrid');
+
+    // build cells
+    const cells = [];
+    for(let r=0;r<rows;r++){
+      for(let c=0;c<cols;c++){
+        const el = document.createElement('div');
+        el.className = 'cell';
+        el.dataset.idx = cells.length;
+        grid.appendChild(el);
+        cells.push(el);
+      }
+    }
+
+    // simple path: snake through a 2D grid - returns list of indices
+    function makeSnakePath(cols, rows){
+      const path = [];
+      for(let r=0;r<rows;r++){
+        if(r % 2 === 0){
+          for(let c=0;c<cols;c++) path.push(r*cols + c);
+        } else {
+          for(let c=cols-1;c>=0;c--) path.push(r*cols + c);
+        }
+      }
+      // loop back gracefully
+      return path;
+    }
+    const path = makeSnakePath(cols, rows);
+
+    // animate snake
+    let head = 0;
+    const length = 14; // snake length
+    const speed = 90; // ms per step
+
+    function step(){
+      // clear all states
+      cells.forEach(cell => cell.classList.remove('active','mid','tail'));
+
+      for(let i=0;i<length;i++){
+        const idx = (head - i + path.length) % path.length;
+        const cellIndex = path[idx];
+        if(!cells[cellIndex]) continue;
+        if(i===0) cells[cellIndex].classList.add('active');
+        else if(i < Math.floor(length/2)) cells[cellIndex].classList.add('mid');
+        else cells[cellIndex].classList.add('tail');
+      }
+
+      head = (head + 1) % path.length;
+    }
+
+    // start animation
+    setInterval(step, speed);
+    step();
+
+    // Hint: to use real GitHub stats, call GitHub REST API (fetch) and update card values dynamically.
+    // Example (pseudo): fetch('https://api.github.com/repos/OWNER/REPO').then(...)
+    // Remember GitHub rate limits and consider using a personal token for higher limits.
+
+  </script>
+</body>
+</html>
